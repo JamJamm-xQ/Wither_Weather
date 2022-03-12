@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wither_weather/services/location.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:wither_weather/services/networking.dart';
+import 'package:wither_weather/services/networking.dart';
 
 String apiKey = "5bb36c4b06b0a26617c3fa1f96b4658e";
 
@@ -20,10 +20,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
-    //getLocation();
+    getLocationData();
   }
 
-  void getLocation() async {
+  void getLocationData() async {
     await locationInfo.getCurrentLocation();
     print(locationInfo.positionUpdate);
 
@@ -32,31 +32,12 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
     longitude = locationInfo.longitudeSto;
     print(longitude);
-  }
 
-  void getData() async {
-    http.Response response = await http.get(Uri.parse(
-        "https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&appid=$apiKey"));
+    NetworkAid networkAid = NetworkAid(
+        "https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&appid=$apiKey");
 
-    if (response.statusCode == 200) {
-      String data = response.body;
-      // print(data);
-      var weatherdescription =
-          jsonDecode(data)['current']['weather'][0]['description'];
-
-      var jsDec = jsonDecode(data);
-
-      double tempurature = jsDec['current']['temp'];
-      int condition = jsDec['current']['weather'][0]['id'];
-      String cityName = jsDec['timezone'];
-
-      print(
-          "General Overview of $cityName: $weatherdescription,\n Weather ID: $condition, \n Temp: $tempurature");
-    } else {
-      print(response.statusCode);
-    }
-
-    // print(response.body);
+    var weatherData = await networkAid.getData();
+    
   }
 
   /* void checkLocationEnabledStatus() async {
@@ -83,8 +64,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    getLocation();
-    getData();
+    getLocationData();
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -97,7 +78,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 // checkLocationEnabledStatus();
 
                 setState(() {
-                  getLocation();
+                  getLocationData();
                   //
                 });
               },

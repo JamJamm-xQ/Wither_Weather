@@ -76,3 +76,13 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 }
+
+
+
+    // var jsDec = jsonDecode(data);
+    // double tempurature = jsDec['current']['temp'];
+    // int condition = jsDec['current']['weather'][0]['id'];
+    // String cityName = jsDec['timezone'];
+
+    // print(
+    //     "General Overview of $cityName: $weatherdescription,\n Weather ID: $condition, \n Temp: $tempurature");
