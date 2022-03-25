@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:wither_weather/screens/location_screen.dart';
 import 'package:wither_weather/services/location.dart';
 import 'package:wither_weather/services/networking.dart';
-import 'package:wither_weather/services/networking.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 String apiKey = "5bb36c4b06b0a26617c3fa1f96b4658e";
 
@@ -37,7 +38,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
         "https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&appid=$apiKey");
 
     var weatherData = await networkAid.getData();
-    
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return LocationScreen();
+    }));
   }
 
   /* void checkLocationEnabledStatus() async {
@@ -68,6 +72,18 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
     return Scaffold(
       body: Center(
+        child: SpinKitCubeGrid(
+          color: Colors.grey[500],
+          size: 70.0,
+        ),
+      ),
+    );
+  }
+}
+
+
+/*
+Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -86,7 +102,5 @@ class _LoadingScreenState extends State<LoadingScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
+      )
+*/
