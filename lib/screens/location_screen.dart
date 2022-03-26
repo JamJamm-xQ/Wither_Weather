@@ -1,31 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:wither_weather/utilities/constants.dart';
+import 'package:wither_weather/services/weather.dart';
 
 class LocationScreen extends StatefulWidget {
-  const LocationScreen({Key? key}) : super(key: key);
+  const LocationScreen({this.locationWeather});
+  final dynamic locationWeather;
 
   @override
   _LocationScreenState createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
+  //Ideally, I should've used the "late" keyword but that would make my variables
+  //unitialized, hence, providing a null value which is unacceptable.
+  WeatherModel weather = WeatherModel();
+  int tempurature = 0;
+  // int condition = 0;
+  String weatherIcon = "";
+  String weatherActivity = "";
+  String cityName = "";
+  String weatherDescription = "";
+
+  get onPressed => null;
+
+  @override
+  void initState() {
+    super.initState();
+    uiUpdate(widget.locationWeather);
+    // print("From location weather: ${widget.locationWeather}");
+  }
+
+  void uiUpdate(dynamic weatherData2) {
+    setState(() {
+      double temp = weatherData2['current']['temp'];
+      tempurature = temp.toInt();
+      weatherActivity = weather.getMessage(tempurature);
+      print("Temp: $tempurature");
+
+      var condition = weatherData2['current']['weather'][0]['id'];
+      weatherIcon = weather.getWeatherIcon(condition);
+
+      String timezone = weatherData2['timezone'];
+
+      cityName = timezone.substring(timezone.indexOf('/') + 1);
+      print(cityName);
+
+      weatherDescription = weatherData2['current']['weather'][0]['description'];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          // gradient: RadialGradient(
-          //   center: Alignment(-0.9, -0.9), // near the top right
-          //   radius: 0.7,
-          //   colors: [Colors.yellow, Colors.blue],
-          //   //focal: Alignment.topLeft,
-          //   stops: <double>[0.4, 1.0],
-          // ),
-            image: DecorationImage(
-              image: const AssetImage('images/location_background.jpg'),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.8), BlendMode.dstATop),
-            ),
+        decoration: const BoxDecoration(
+          /*gradient: RadialGradient(
+            center: Alignment(-0.9, -0.9), // near the top right
+            radius: 0.7,
+            colors: [Colors.yellow, Colors.blue],
+            //focal: Alignment.topLeft,
+            stops: <double>[0.4, 1.0],
+          ),*/
+
+          gradient: LinearGradient(
+              colors: [Color(0xFF13225A), Color(0xFF9662A2)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter),
+
+          /*image: DecorationImage(
+            image: const AssetImage('images/location_background.jpg'),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+                Colors.white.withOpacity(0.8), BlendMode.dstATop),
+          ),*/
         ),
         constraints: const BoxConstraints.expand(),
         child: SafeArea(
@@ -44,6 +92,15 @@ class _LocationScreenState extends State<LocationScreen> {
                     ),
                   ),
                   TextButton(
+                    onPressed: () {
+                      uiUpdate(widget.locationWeather);
+                    },
+                    child: const Icon(
+                      Icons.refresh,
+                      size: 50.0,
+                    ),
+                  ),
+                  TextButton(
                     onPressed: () {},
                     child: const Icon(
                       Icons.location_city,
@@ -54,30 +111,39 @@ class _LocationScreenState extends State<LocationScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 15.0),
-                child: Row(
-                  children: const <Widget>[
-                    SizedBox(
-                      width: 10.0,
-                    ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      '32°',
+                      'It\'s $tempurature°',
                       style: kTempTextStyle,
                     ),
-                    Text(
-                      '☀️',
-                      style: kConditionTextStyle,
+                    Row(
+                      children: <Widget>[
+                        // const SizedBox(
+                        //   width: 10.0,
+                        // ),
+                        Text(
+                          'with $weatherDescription ',
+                          style: kWeatherDescriptionTextStyle,
+                        ),
+                        Text(
+                          weatherIcon,
+                          style: kConditionTextStyle,
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-               const Padding(
-                 padding: EdgeInsets.only(right: 15.0),
-                 child: Text(
-                  "It's 🍦 time in San Francisco!",
+              Padding(
+                padding: const EdgeInsets.only(right: 15.0),
+                child: Text(
+                  "$weatherActivity in $cityName!",
                   textAlign: TextAlign.right,
                   style: kMessageTextStyle,
+                ),
               ),
-               ),
             ],
           ),
         ),
@@ -88,10 +154,7 @@ class _LocationScreenState extends State<LocationScreen> {
 
 
 
-    // var jsDec = jsonDecode(data);
-    // double tempurature = jsDec['current']['temp'];
-    // int condition = jsDec['current']['weather'][0]['id'];
-    // String cityName = jsDec['timezone'];
+  
 
     // print(
     //     "General Overview of $cityName: $weatherdescription,\n Weather ID: $condition, \n Temp: $tempurature");

@@ -19,7 +19,7 @@ class WWY extends StatelessWidget {
           "/": (context) => const Splash(),
           "/loadingscreen": (context) => const LoadingScreen(),
           "/cityscreen": (context) => const CityScreen(),
-          "/locationscreen": (context) => const LocationScreen()
+          "/locationscreen": (context) => const LocationScreen(),
         }
     );
   }
