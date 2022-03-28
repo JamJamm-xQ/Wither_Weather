@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:wither_weather/screens/city_screen.dart';
 import 'package:wither_weather/utilities/constants.dart';
 import 'package:wither_weather/services/weather.dart';
 
@@ -33,6 +33,12 @@ class _LocationScreenState extends State<LocationScreen> {
 
   void uiUpdate(dynamic weatherData2) {
     setState(() {
+      if (weatherData2 == null) {
+        tempurature = 0;
+        weatherActivity = "Couldn't access weather data ☹🙁";
+        cityName = "";
+        return;
+      }
       double temp = weatherData2['current']['temp'];
       tempurature = temp.toInt();
       weatherActivity = weather.getMessage(tempurature);
@@ -47,6 +53,32 @@ class _LocationScreenState extends State<LocationScreen> {
       print(cityName);
 
       weatherDescription = weatherData2['current']['weather'][0]['description'];
+    });
+  }
+
+  void uiUpdateCity(dynamic weatherData2) {
+    setState(() {
+      if (weatherData2 == null) {
+        tempurature = 0;
+        weatherActivity = "Couldn't access weather data ☹";
+        cityName = "";
+        return;
+      }
+      double temp = weatherData2['main']['temp'];
+      tempurature = temp.toInt();
+      weatherActivity = weather.getMessage(tempurature);
+      print("Temp: $tempurature");
+
+      var condition = weatherData2['weather'][0]['id'];
+      weatherIcon = weather.getWeatherIcon(condition);
+
+      String timezone = weatherData2['name'];
+
+      // cityName = timezone.substring(timezone.indexOf('/') + 1);
+      cityName = timezone;
+      print(cityName);
+
+      weatherDescription = weatherData2['weather'][0]['description'];
     });
   }
 
@@ -85,23 +117,32 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var weatherData = await weather.getLocationNetwork();
+                      uiUpdate(weatherData);
+                    },
                     child: const Icon(
                       Icons.near_me,
                       size: 50.0,
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
-                      uiUpdate(widget.locationWeather);
+                    onPressed: () async {
+                      var typedCityName = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return const CityScreen();
+                          },
+                        ),
+                      );
+                      if (typedCityName != null) {
+                        var weatherData3 =
+                            await weather.getWeatherFromCity(typedCityName);
+                        uiUpdateCity(weatherData3);
+                      }
+                      ;
                     },
-                    child: const Icon(
-                      Icons.refresh,
-                      size: 50.0,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
                     child: const Icon(
                       Icons.location_city,
                       size: 50.0,

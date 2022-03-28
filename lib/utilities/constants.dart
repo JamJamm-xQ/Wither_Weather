@@ -23,3 +23,20 @@ const kWeatherDescriptionTextStyle = TextStyle(
   fontFamily: 'Spartan MB',
   fontSize: 20.0,
 );
+
+
+const kTextFieldInputBorderStyle = InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10.0),
+                        ),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: 'Enter City Name',
+                      hintStyle: TextStyle(color: Colors.blueGrey),
+                      icon: Icon(
+                        Icons.location_city,
+                        color: Colors.white,
+                      ));
