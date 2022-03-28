@@ -1,4 +1,34 @@
+import 'package:wither_weather/services/location.dart';
+import 'package:wither_weather/services/networking.dart';
+
+const String apiKey = "5bb36c4b06b0a26617c3fa1f96b4658e";
+const String apiUrlLatLong = "https://api.openweathermap.org/data/2.5/onecall";
+
+const String apiUrlForCity = "https://api.openweathermap.org/data/2.5/weather";
+
+LocationInfo locationInfo = LocationInfo();
+
+
 class WeatherModel {
+  Future<dynamic> getWeatherFromCity(String cityName) async {
+        NetworkAid networkAid = NetworkAid(
+        "$apiUrlForCity?q=$cityName&appid=$apiKey&units=metric");
+
+    var weatherData3 = await networkAid.getData();
+    return weatherData3;
+  }
+
+  Future<dynamic> getLocationNetwork() async {
+    await locationInfo.getCurrentLocation();
+    print(locationInfo.positionUpdate);
+
+    NetworkAid networkAid = NetworkAid(
+        "$apiUrlLatLong?lat=${locationInfo.latitudeSto}&lon=${locationInfo.longitudeSto}&appid=$apiKey&units=metric");
+
+    var weatherData = await networkAid.getData();
+    return weatherData;
+  }
+
   String getWeatherIcon(int condition) {
     if (condition < 300) {
       return '🌩';
