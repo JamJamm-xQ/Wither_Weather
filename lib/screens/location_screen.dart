@@ -4,7 +4,7 @@ import 'package:wither_weather/utilities/constants.dart';
 import 'package:wither_weather/services/weather.dart';
 
 class LocationScreen extends StatefulWidget {
-  const LocationScreen({this.locationWeather});
+  const LocationScreen({Key? key, this.locationWeather}) : super(key: key);
   final dynamic locationWeather;
 
   @override
@@ -141,7 +141,6 @@ class _LocationScreenState extends State<LocationScreen> {
                             await weather.getWeatherFromCity(typedCityName);
                         uiUpdateCity(weatherData3);
                       }
-                      ;
                     },
                     child: const Icon(
                       Icons.location_city,
